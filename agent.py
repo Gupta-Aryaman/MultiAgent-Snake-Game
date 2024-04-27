@@ -5,7 +5,6 @@ from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
-from multiAgentGame import SnakeGameAI as MultiAgentGame
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -161,7 +160,7 @@ def play_with_model():
     agent.model.load_state_dict(torch.load('model/model.pth'))
     agent.model.eval()  # Set the model to evaluation mode (no training)
 
-    game = MultiAgentGame()
+    game = SnakeGameAI()
 
     while True:
         game_over, player_score = game.play_step_player()
@@ -180,7 +179,7 @@ def play_with_model():
             break
 
 
-# if __name__ == '__main__':
-#     # train()
+if __name__ == '__main__':
+    # train()
 
-#     play_with_model()
+    play_with_model()
