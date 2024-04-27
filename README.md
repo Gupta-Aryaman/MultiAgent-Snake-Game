@@ -3,10 +3,14 @@
 Making computer agent learn snake game using Deep Qlearning Algorithm. 
 Player/User can also compete against the computer agent (MultiAgent Game).
 
-
+## Project Screenshots
+### Training
 ![alt text](images/image.png)
 
-Run the code - 
+### Playing against AI Agent
+![alt text](images/image2.png)
+
+## Run the code - 
 1. Create and activate virtual environment
 ```
 python -m venv env
