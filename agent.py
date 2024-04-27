@@ -5,6 +5,7 @@ from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
+from multiAgentGame import SnakeGameAI as MultiAgentGame
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -98,6 +99,16 @@ class Agent:
             final_move[move] = 1
 
         return final_move
+    
+    def get_action_model_only(self, state):
+        final_move = [0, 0, 0]
+        state_tensor = torch.tensor(state, dtype=torch.float)
+        with torch.no_grad():  # Disable gradient tracking since we're not training
+            prediction = self.model(state_tensor)
+            move = torch.argmax(prediction).item()
+        final_move[move] = 1
+        return final_move
+
 
 
 def train():
@@ -143,5 +154,33 @@ def train():
             plot(plot_scores, plot_mean_scores)
 
 
-if __name__ == '__main__':
-    train()
+def play_with_model():
+    agent = Agent()
+
+    # Load the saved model
+    agent.model.load_state_dict(torch.load('model/model.pth'))
+    agent.model.eval()  # Set the model to evaluation mode (no training)
+
+    game = MultiAgentGame()
+
+    while True:
+        game_over, player_score = game.play_step_player()
+
+        state_old = agent.get_state(game)
+        final_move = agent.get_action_model_only(state_old)
+        reward, done, score = game.play_step(final_move)
+        state_new = agent.get_state(game)
+
+        if done or game_over:
+            if game_over:
+                print('AI Wins!')
+            else:
+                print('Player Wins!')
+            print("Player Score: ", game.score_player, "\nAI Score: ", game.score)
+            break
+
+
+# if __name__ == '__main__':
+#     # train()
+
+#     play_with_model()
